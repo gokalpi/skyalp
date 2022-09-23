@@ -1,50 +1,28 @@
-import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { CheckIcon, EnvelopeIcon, ExclamationTriangleIcon, PhoneIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import React, { useState } from 'react';
+import { z } from 'zod';
 
-type FormData = {
-  name: string;
-  email: string;
-  company: string;
-  phone: string;
-  message: string;
-};
+import Form from './form/form';
+import TextInput from './form/text-input';
+import TextAreaInput from './form/textarea-input';
+import Modal from './modal';
 
-const ContactSchema = yup.object().shape({
-  name: yup.string().required('Name is required.'),
-  email: yup.string().required('E-mail is required.').email('Please enter a valid email.'),
-  company: yup.string(),
-  phone: yup.string().required('Phone is required.'),
-  message: yup.string().required('Message is required.'),
+const ContactSchema = z.object({
+  name: z.string().min(1, 'Name is required.'),
+  email: z.string().min(1, 'E-mail is required.').email('Please enter a valid email.'),
+  company: z.string(),
+  phone: z.string().min(1, 'Phone is required.'),
+  message: z.string().min(1, 'Message is required.'),
 });
 
 export default function Contact() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: yupResolver(ContactSchema),
-  });
-
-  const onSubmit = handleSubmit(async (data) => {
-    const res = await fetch('/api/contact', {
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    });
-
-    const { error } = await res.json();
-    if (error) {
-      console.log(error);
-      return;
-    }
-
-    alert('Your message is sent to us');
-  });
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalIcon, setModalIcon] = useState<React.ReactElement>(
+    <CheckCircleIcon className='h-16 w-16 text-green-500' aria-hidden='true' />
+  );
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
 
   return (
     <section id='contact-us' className='relative bg-white dark:bg-slate-800'>
@@ -89,101 +67,52 @@ export default function Contact() {
         </div>
         <div className='py-16 px-4 sm:px-6 lg:col-span-3 lg:py-24 lg:px-8 xl:pl-12'>
           <div className='max-w-lg mx-auto lg:max-w-none'>
-            <form className='grid grid-cols-1 gap-y-6' onSubmit={onSubmit}>
-              <div>
-                <label htmlFor='full-name' className='sr-only'>
-                  Name
-                </label>
-                <input
-                  {...register('name')}
-                  type='text'
-                  autoComplete='name'
-                  className='block w-full shadow-sm py-3 px-4 bg-gray-50 border border-gray-300 text-gray-900 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                  placeholder='Name'
-                />
-                {errors.name && (
-                  <span role='alert' className='text-red-700 dark:text-red-300 text-sm'>
-                    {errors.name.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <label htmlFor='email' className='sr-only'>
-                  Email
-                </label>
-                <input
-                  {...register('email')}
-                  type='email'
-                  autoComplete='email'
-                  className='block w-full shadow-sm py-3 px-4 bg-gray-50 border border-gray-300 text-gray-900 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                  placeholder='Email'
-                />
-                {errors.email && (
-                  <span role='alert' className='text-red-700 dark:text-red-300 text-sm'>
-                    {errors.email.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <label htmlFor='company' className='sr-only'>
-                  Company
-                </label>
-                <input
-                  {...register('company')}
-                  type='text'
-                  autoComplete='name'
-                  className='block w-full shadow-sm py-3 px-4 bg-gray-50 border border-gray-300 text-gray-900 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                  placeholder='Company'
-                />
-                {errors.company && (
-                  <span role='alert' className='text-red-700 dark:text-red-300 text-sm'>
-                    {errors.company.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <label htmlFor='phone' className='sr-only'>
-                  Phone
-                </label>
-                <input
-                  {...register('phone')}
-                  type='tel'
-                  autoComplete='tel'
-                  className='block w-full shadow-sm py-3 px-4 bg-gray-50 border border-gray-300 text-gray-900 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                  placeholder='Phone'
-                />
-                {errors.phone && (
-                  <span role='alert' className='text-red-700 dark:text-red-300 text-sm'>
-                    {errors.phone.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <label htmlFor='message' className='sr-only'>
-                  Message
-                </label>
-                <textarea
-                  {...register('message')}
-                  rows={4}
-                  className='block w-full shadow-sm py-3 px-4 bg-gray-50 border border-gray-300 text-gray-900 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                  placeholder='Message'
-                  defaultValue={''}
-                />
-                {errors.message && (
-                  <span role='alert' className='text-red-700 dark:text-red-300 text-sm'>
-                    {errors.message.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <button
-                  type='submit'
-                  className='inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-                >
-                  Submit
-                </button>
-              </div>
-            </form>
+            <Form
+              submitText='Submit'
+              schema={ContactSchema}
+              initialValues={{ name: '', email: '', company: '', phone: '', message: '' }}
+              onSubmit={async (data) => {
+                const res = await fetch('/api/contact', {
+                  body: JSON.stringify(data),
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  method: 'POST',
+                });
+
+                const { error } = await res.json();
+                if (error) {
+                  console.log(error);
+                  setModalIcon(<ExclamationTriangleIcon className='h-16 w-16 text-red-500' aria-hidden='true' />);
+                  setModalTitle('Message Not Sent');
+                  setModalMessage(error);
+                } else {
+                  setModalIcon(<CheckCircleIcon className='h-16 w-16 text-green-500' aria-hidden='true' />);
+                  setModalTitle('Message Sent');
+                  setModalMessage(
+                    'Your message is successfully sent to us. We will get back to you as soon as possible.'
+                  );
+                }
+
+                setModalOpen(true);
+              }}
+              className='grid grid-cols-1 gap-y-6'
+            >
+              <TextInput name='name' label='Name' placeholder='Name' srOnly />
+              <TextInput name='email' label='Name' type='email' placeholder='Email' srOnly />
+              <TextInput name='company' label='Company' placeholder='Company' srOnly />
+              <TextInput name='phone' label='Phone' placeholder='Phone' srOnly />
+              <TextAreaInput name='message' label='Message' rows={4} placeholder='Message' srOnly />
+            </Form>
+
+            <Modal
+              open={isModalOpen}
+              setOpen={setModalOpen}
+              icon={modalIcon}
+              title={modalTitle}
+              message={modalMessage}
+              buttonText='Close'
+            />
           </div>
         </div>
       </div>

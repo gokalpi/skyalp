@@ -2,19 +2,13 @@ import classNames from 'classnames';
 import { forwardRef, PropsWithoutRef, ComponentPropsWithoutRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-export interface TextInputProps extends PropsWithoutRef<JSX.IntrinsicElements['input']> {
+export interface TextAreaInputProps extends PropsWithoutRef<JSX.IntrinsicElements['textarea']> {
   /** Field name */
   name: string;
   /** Field label */
   label: string;
   /** Label position */
   labelPosition?: 'top' | 'left';
-  /** Icon */
-  icon?: React.ReactElement;
-  /** Icon position */
-  iconPosition?: 'left' | 'right';
-  /** Field type. Doesn't include radio buttons and checkboxes */
-  type?: 'text' | 'password' | 'email' | 'number' | 'date' | 'search';
   /** Label for screen readers only */
   srOnly?: boolean;
   /** Input class names */
@@ -30,15 +24,12 @@ export interface TextInputProps extends PropsWithoutRef<JSX.IntrinsicElements['i
 }
 
 /* eslint-disable react/display-name */
-export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
+export const TextAreaInput = forwardRef<HTMLInputElement, TextAreaInputProps>(
   (
     {
       name,
       label,
       labelPosition = 'top',
-      icon,
-      iconPosition = 'left',
-      type = 'text',
       srOnly = false,
       inputClasses,
       inputErrorClasses,
@@ -77,11 +68,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           )}
 
           <div className={labelPosition === 'left' ? 'mt-1 sm:mt-0 relative sm:col-span-2' : 'relative'}>
-            {icon && iconPosition === 'left' && (
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>{icon}</div>
-            )}
-
-            <input
+            <textarea
               {...register(name)}
               {...props}
               className={
@@ -92,8 +79,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
                       'placeholder-red-700 dark:placeholder-red-400 focus:ring-red-500 focus:border-red-500',
                       'shadow-sm dark:shadow-sm-light rounded-md block w-full py-2.5 px-4',
                       'dark:focus:ring-blue-500 dark:focus:border-blue-500',
-                      'focus:outline-none focus:ring-2 focus:ring-offset-2',
-                      icon ? (iconPosition == 'left' ? 'pl-10' : 'pr-10') : ''
+                      'focus:outline-none focus:ring-2 focus:ring-offset-2'
                     )
                   : inputClasses ??
                     classNames(
@@ -101,16 +87,11 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
                       'dark:placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500',
                       'shadow-sm dark:shadow-sm-light rounded-md block w-full py-2.5 px-4',
                       'dark:focus:ring-blue-500 dark:focus:border-blue-500',
-                      'focus:outline-none focus:ring-2 focus:ring-offset-2',
-                      icon ? (iconPosition == 'left' ? 'pl-10' : 'pr-10') : ''
+                      'focus:outline-none focus:ring-2 focus:ring-offset-2'
                     )
               }
               disabled={isSubmitting}
             />
-
-            {icon && iconPosition === 'right' && (
-              <div className='absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none'>{icon}</div>
-            )}
           </div>
         </div>
 
@@ -124,4 +105,4 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   }
 );
 
-export default TextInput;
+export default TextAreaInput;

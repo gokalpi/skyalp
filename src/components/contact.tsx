@@ -42,9 +42,9 @@ export default function Contact() {
                 <dt className='sr-only'>Postal address</dt>
                 <dd>
                   <p>
-                    7 Bell Yard
+                    Monomark House, 27 Old Gloucester Street
                     <br />
-                    London, United Kingdom, WC2A 2JR
+                    London, United Kingdom, WC1N 3AX
                   </p>
                 </dd>
               </div>
